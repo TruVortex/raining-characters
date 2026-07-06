@@ -1,0 +1,72 @@
+name: Build and Release Weather Landscapes
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+        include:
+          - os: ubuntu-latest
+            artifact_name: weather-landscapes-linux
+            nuitka_args: --output-filename=weather-landscapes-linux
+            binary_path: weather-landscapes-linux
+          - os: macos-latest
+            artifact_name: weather-landscapes-macos
+            nuitka_args: --output-filename=weather-landscapes-macos
+            binary_path: weather-landscapes-macos
+          - os: windows-latest
+            artifact_name: weather-landscapes-windows
+            nuitka_args: --output-filename=weather-landscapes-windows.exe
+            binary_path: weather-landscapes-windows.exe
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - name: Set up Python
+        run: uv python install
+      - name: Install dependencies
+        run: uv sync --locked
+      - name: Build Standalone Executable with Nuitka
+        run: |
+          uv run nuitka --onefile --remove-output --assume-yes-for-downloads ${{ matrix.nuitka_args }} main.py
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: ${{ matrix.binary_path }}
+          if-no-files-found: error
+  release:
+    name: Create GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Upload Binaries to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/weather-landscapes-linux/weather-landscapes-linux
+            artifacts/weather-landscapes-macos/weather-landscapes-macos
+            artifacts/weather-landscapes-windows/weather-landscapes-windows.exe
+          tag_name: ${{ github.ref_name }}
+          name: WeatherLandscapes ${{ github.ref_name }}
+          generate_release_notes: true
