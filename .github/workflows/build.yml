@@ -1,4 +1,4 @@
-name: Build and Release Weather Landscapes
+name: Build and Release Raining Characters
 
 on:
   push:
@@ -18,17 +18,17 @@ jobs:
         os: [ ubuntu-latest, macos-latest, windows-latest ]
         include:
           - os: ubuntu-latest
-            artifact_name: weather-landscapes-linux
-            nuitka_args: --output-filename=weather-landscapes-linux
-            binary_path: weather-landscapes-linux
+            artifact_name: raining-characters-linux
+            nuitka_args: --output-filename=raining-characters-linux
+            binary_path: raining-characters-linux
           - os: macos-latest
-            artifact_name: weather-landscapes-macos
-            nuitka_args: --output-filename=weather-landscapes-macos
-            binary_path: weather-landscapes-macos
+            artifact_name: raining-characters-macos
+            nuitka_args: --output-filename=raining-characters-macos
+            binary_path: raining-characters-macos
           - os: windows-latest
-            artifact_name: weather-landscapes-windows
-            nuitka_args: --output-filename=weather-landscapes-windows.exe
-            binary_path: weather-landscapes-windows.exe
+            artifact_name: raining-characters-windows
+            nuitka_args: --output-filename=raining-characters-windows.exe
+            binary_path: raining-characters-windows.exe
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -64,9 +64,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            artifacts/weather-landscapes-linux/weather-landscapes-linux
-            artifacts/weather-landscapes-macos/weather-landscapes-macos
-            artifacts/weather-landscapes-windows/weather-landscapes-windows.exe
+            artifacts/raining-characters-linux/raining-characters-linux
+            artifacts/raining-characters-macos/raining-characters-macos
+            artifacts/raining-characters-windows/raining-characters-windows.exe
           tag_name: ${{ github.ref_name }}
           name: WeatherLandscapes ${{ github.ref_name }}
           generate_release_notes: true
