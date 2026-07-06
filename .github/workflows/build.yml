@@ -68,5 +68,5 @@ jobs:
             artifacts/raining-characters-macos/raining-characters-macos
             artifacts/raining-characters-windows/raining-characters-windows.exe
           tag_name: ${{ github.ref_name }}
-          name: WeatherLandscapes ${{ github.ref_name }}
+          name: Raining Characters ${{ github.ref_name }}
           generate_release_notes: true
