@@ -1,7 +1,17 @@
 import datetime
+import os
 import sys
 
 from blessed import Terminal
+
+if os.name == 'nt':
+    import ctypes
+
+    kernel32 = ctypes.windll.kernel32
+    stdout_handle = kernel32.GetStdHandle(-11)
+    mode = ctypes.c_ulong()
+    if kernel32.GetConsoleMode(stdout_handle, ctypes.byref(mode)):
+        kernel32.SetConsoleMode(stdout_handle, mode.value | 0x0004)
 
 from src.generators.landscape import LandscapeGenerator
 from src.generators.palette import WeatherPalette
